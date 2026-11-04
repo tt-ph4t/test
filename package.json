@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "dev": "turbo run dev"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "12.2.1"
+    }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "es-toolkit": "1.53.1",
+    "pg": "8.23.1"
+  }
+}

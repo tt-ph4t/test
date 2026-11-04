@@ -1,0 +1,15 @@
+:root {
+  color-scheme: dark;
+
+  --spacing: 0.25rem;
+}
+
+input,
+button {
+  all: revert;
+}
+
+::placeholder,
+[data-muted] {
+  opacity: 0.3;
+}

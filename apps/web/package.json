@@ -1,0 +1,27 @@
+{
+  "name": "nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "10.6.0",
+    "@fluentui/react-context-selector": "9.2.21",
+    "@repo/shared": "*",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "ahooks": "3.11.0",
+    "babel-plugin-react-compiler": "1.0.0",
+    "the-new-css-reset": "1.11.3",
+    "typescript": "^5"
+  }
+}
