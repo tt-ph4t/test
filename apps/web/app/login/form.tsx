@@ -44,10 +44,10 @@ const SignUps = () => {
 
 const SignOut = () => {
   const auth = useAuth();
-  const isServerOnline = useIsServerOnline();
+  const disabled = useDisabled();
 
   return (
-    <button disabled={!isServerOnline} type="button" onClick={auth.signOut}>
+    <button disabled={!disabled} type="button" onClick={auth.signOut}>
       Sign out
     </button>
   );

@@ -11,6 +11,7 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import type { APIResponse } from "@repo/shared/types.ts";
+import { omit } from "es-toolkit";
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { POOL_INJECTION_TOKEN } from "../database.module.ts";
@@ -18,7 +19,6 @@ import { SignInDto, SignUpDto } from "./dto.ts";
 
 const addPepper = (password: string, pepper = "gay") => `${pepper}_${password}`;
 
-@Public()
 @Controller("auth")
 @UseInterceptors(FileInterceptor(""))
 export default class {
@@ -30,6 +30,7 @@ export default class {
     private readonly signInService: SignInService,
   ) {}
 
+  @Public()
   @Post("sign-in")
   @HttpCode(200)
   async signIn(@Body() signInDto: SignInDto): Promise<APIResponse> {
@@ -38,7 +39,8 @@ export default class {
         `
         SELECT *
         FROM users
-        WHERE email = $1`,
+        WHERE email = $1
+        `,
         [signInDto.email],
       )
     ).rows;
@@ -52,7 +54,8 @@ export default class {
             `
             UPDATE users
             SET password_hash = $1
-            WHERE id = $2`,
+            WHERE id = $2
+            `,
             [await this.passwordHasher.hash(password), user.id],
           );
 
@@ -61,7 +64,7 @@ export default class {
         return {
           message: "ok",
           data: {
-            user,
+            user: omit(user, ["password_hash"]),
           },
         };
       }
@@ -72,6 +75,7 @@ export default class {
     };
   }
 
+  @Public()
   @Post("sign-up")
   async signUp(@Body() signUpDto: SignUpDto): Promise<APIResponse> {
     try {
@@ -109,12 +113,11 @@ export default class {
   }
 
   @Post("sign-out")
-  async signOut(): Promise<APIResponse> {
-    await this.signInService.signOut();
-
-    return {
-      message: "sign out ok",
-    };
+  async signOut(): Promise<APIResponse | void> {
+    if (await this.signInService.signOut())
+      return {
+        message: "Signed out successfully",
+      };
   }
 }
 

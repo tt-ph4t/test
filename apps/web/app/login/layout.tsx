@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import React from "react";
 
 export default function Layout({ children }: LayoutProps<"/login">) {
   return (
@@ -12,7 +12,7 @@ export default function Layout({ children }: LayoutProps<"/login">) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-        } as CSSProperties
+        } as React.CSSProperties
       }
     >
       {children}

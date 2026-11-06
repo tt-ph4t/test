@@ -6,10 +6,13 @@ import {
   useContextSelector,
 } from "@fluentui/react-context-selector";
 import { URLS } from "@repo/shared/config.ts";
+import type { UserResponse } from "@repo/shared/types.ts";
 import { useAsyncEffect, useSetState } from "ahooks";
-import { noop } from "es-toolkit";
+import { flow, noop } from "es-toolkit";
 
-const initialState = {
+const initialState: {
+  user: UserResponse["data"]["user"];
+} = {
   user: {},
 };
 
@@ -21,16 +24,22 @@ const Sync = () => {
   const fetchUser = useFetchUser();
 
   useAsyncEffect(async () => {
-    await fetchUser(`${URLS.API}me`);
+    await fetchUser(`${URLS.API}users/me`);
   }, []);
 };
 
-export const withSessionProvider = (Component) => (props) => (
-  <Context.Provider value={useSetState(initialState)}>
-    <Sync />
-    <Component {...props} />
-  </Context.Provider>
-);
+const useUserId = () => useContextSelector(Context, ([{ user }]) => user.id);
+
+export const withSessionProvider = (Component) => (props) => {
+  const value = useSetState(initialState);
+
+  return (
+    <Context.Provider value={value}>
+      <Sync />
+      <Component {...props} />
+    </Context.Provider>
+  );
+};
 
 export const useFetchUser = () => {
   const setState = useContextSelector(Context, ([, a]) => a);
@@ -41,19 +50,18 @@ export const useFetchUser = () => {
     const { data } = await response.clone().json();
 
     setState({
-      user: (data?.user ? data : initialState)["user"],
+      user: data?.user ?? initialState.user,
     });
 
     return response;
   };
 };
 
-export const useIsAuthenticated = () =>
-  useContextSelector(Context, ([{ user }]) => Boolean(user.id));
+export const useIsAuthenticated = flow(useUserId, Boolean);
 
 export const withAuthenticated = (Component) => (props) => {
   const isAuthenticated = useIsAuthenticated();
-  const userId = useContextSelector(Context, ([{ user }]) => user.id);
+  const userId = useUserId();
 
   if (isAuthenticated) return <Component key={userId} {...props} />;
 };

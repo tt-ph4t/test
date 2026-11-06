@@ -2,8 +2,8 @@ import { AuthenticationModule } from "@nestjs/authentication";
 import { Module } from "@nestjs/common";
 import { URLS } from "@repo/shared/config.ts";
 import { AuthModule } from "./auth/module.ts";
-import { MeController } from "./me.controller.ts";
 import { PingModule } from "./ping/module.ts";
+import { UsersModule } from "./users/module.ts";
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { PingModule } from "./ping/module.ts";
     }),
     AuthModule,
     PingModule,
+    UsersModule,
   ],
-  controllers: [MeController],
 })
 export class AppModule {}
