@@ -1,11 +1,10 @@
 import { useLogs } from "@/app/_misc/logs";
-
-type FetchParams = Parameters<typeof fetch>;
+import type { FetchParameters } from "@repo/shared/types.ts";
 
 export const useFetch = () => {
   const logs = useLogs();
 
-  return async (input: FetchParams[0], init?: FetchParams[1]) => {
+  return async (input: FetchParameters[0], init?: FetchParameters[1]) => {
     const response = await fetch(input, {
       credentials: "include",
       ...init,

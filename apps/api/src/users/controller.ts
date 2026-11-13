@@ -1,6 +1,6 @@
 import { CurrentUser, type SessionRecord } from "@nestjs/authentication";
 import { Controller, Get, Inject, Session, Sse } from "@nestjs/common";
-import type { UserResponse } from "@repo/shared/types.js";
+import type { User, UserResponse } from "@repo/shared/types.ts";
 import { Pool } from "pg";
 import { exhaustMap, from, map, takeUntil, timer } from "rxjs";
 import { POOL_INJECTION_TOKEN } from "../database.module.ts";
@@ -17,7 +17,7 @@ export default class {
 
   @Sse("unstable_sse_me")
   unstable_sse_me(
-    @CurrentUser() user: UserResponse["data"]["user"],
+    @CurrentUser() user: User,
     @Session() session: SessionRecord,
   ) {
     return timer(0, 1000).pipe(
@@ -43,7 +43,7 @@ export default class {
   }
 
   @Get("me")
-  me(@CurrentUser() user: UserResponse["data"]["user"]): UserResponse {
+  me(@CurrentUser() user: User): UserResponse {
     return {
       data: {
         user,

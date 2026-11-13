@@ -11,7 +11,6 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import type { APIResponse } from "@repo/shared/types.ts";
-import { omit } from "es-toolkit";
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { POOL_INJECTION_TOKEN } from "../database.module.ts";
@@ -63,9 +62,6 @@ export default class {
 
         return {
           message: "ok",
-          data: {
-            user: omit(user, ["password_hash"]),
-          },
         };
       }
     }
@@ -98,9 +94,6 @@ export default class {
 
       return {
         message: "Account created successfully",
-        data: {
-          user,
-        },
       };
     } catch (error: any) {
       throw new HttpException(

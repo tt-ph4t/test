@@ -5,11 +5,15 @@ export type APIResponse<d = any> = {
 
 export type PingMessageEvent = MessageEvent<0 | 1>;
 
+export type User = {
+  id: string;
+  email: string;
+};
+
 export type UserResponse = Required<
   APIResponse<{
-    user: {
-      id: string;
-      email: string;
-    };
+    user: User;
   }>
 >;
+
+export type FetchParameters = Parameters<typeof fetch>;

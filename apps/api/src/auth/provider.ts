@@ -4,7 +4,7 @@ import {
   type SessionRecord,
 } from "@nestjs/authentication";
 import { Inject, Injectable } from "@nestjs/common";
-import type { UserResponse } from "@repo/shared/types.ts";
+import type { User } from "@repo/shared/types.ts";
 import { Pool } from "pg";
 import { POOL_INJECTION_TOKEN } from "../database.module.ts";
 
@@ -21,9 +21,7 @@ export default class extends SessionCookieProvider<{}> {
     authenticationRegistry.registerProvider(this);
   }
 
-  async validate(
-    session: SessionRecord,
-  ): Promise<UserResponse["data"]["user"]> {
+  async validate(session: SessionRecord): Promise<User> {
     return (
       await this.pool.query(
         `

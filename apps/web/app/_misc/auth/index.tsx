@@ -1,13 +1,16 @@
 "use client";
 
 import {
+  useFetchAndRevalidateUserSWR,
+  withUserSWR,
+} from "@/app/_misc/auth/session";
+import {
   createContext,
   useContextSelector,
 } from "@fluentui/react-context-selector";
 import { URLS } from "@repo/shared/config.ts";
 import { useLockFn } from "ahooks";
 import { asyncNoop, identity, mapValues } from "es-toolkit";
-import { useFetchUser, withSessionProvider } from "./session";
 
 type ContextType = {
   signUp: (formData: FormData) => Promise<void>;
@@ -23,28 +26,28 @@ const Context = createContext<ContextType>({
 
 const url = new URL(`${URLS.API}auth`);
 
-export const AuthProvider = withSessionProvider(
+export const AuthProvider = withUserSWR(
   (props: Omit<React.ComponentProps<typeof Context.Provider>, "value">) => {
-    const fetchUser = useFetchUser();
+    const fetchAndRevalidateUserSWR = useFetchAndRevalidateUserSWR();
 
     return (
       <Context.Provider
         value={mapValues<ContextType>(
           {
             signUp: async (formData) => {
-              await fetchUser(`${url.href}/sign-up`, {
+              await fetchAndRevalidateUserSWR(`${url}/sign-up`, {
                 method: "POST",
                 body: formData,
               });
             },
             signIn: async (formData) => {
-              await fetchUser(`${url.href}/sign-in`, {
+              await fetchAndRevalidateUserSWR(`${url}/sign-in`, {
                 method: "POST",
                 body: formData,
               });
             },
             signOut: async () => {
-              await fetchUser(`${url.href}/sign-out`, {
+              await fetchAndRevalidateUserSWR(`${url}/sign-out`, {
                 method: "POST",
               });
             },

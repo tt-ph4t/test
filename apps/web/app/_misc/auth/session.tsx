@@ -1,67 +1,51 @@
 "use client";
 
 import { useFetch } from "@/app/_misc/use-fetch";
-import {
-  createContext,
-  useContextSelector,
-} from "@fluentui/react-context-selector";
 import { URLS } from "@repo/shared/config.ts";
-import type { UserResponse } from "@repo/shared/types.ts";
-import { useAsyncEffect, useSetState } from "ahooks";
-import { flow, noop } from "es-toolkit";
+import type { FetchParameters, User } from "@repo/shared/types.ts";
+import useSWR, { useSWRConfig } from "swr";
 
-const initialState: {
-  user: UserResponse["data"]["user"];
-} = {
-  user: {},
-};
+const SWRkey = `${URLS.API}users/me`;
 
-const Context = createContext<
-  ReturnType<typeof useSetState<typeof initialState>>
->([initialState, noop]);
+export const useUserSWR = () => {
+  const fetch = useFetch();
 
-const Sync = () => {
-  const fetchUser = useFetchUser();
-
-  useAsyncEffect(async () => {
-    await fetchUser(`${URLS.API}users/me`);
-  }, []);
-};
-
-const useUserId = () => useContextSelector(Context, ([{ user }]) => user.id);
-
-export const withSessionProvider = (Component) => (props) => {
-  const value = useSetState(initialState);
-
-  return (
-    <Context.Provider value={value}>
-      <Sync />
-      <Component {...props} />
-    </Context.Provider>
+  return useSWR<User>(
+    SWRkey,
+    async () => (await (await fetch(SWRkey)).json()).data.user,
   );
 };
 
-export const useFetchUser = () => {
-  const setState = useContextSelector(Context, ([, a]) => a);
+export const useFetchAndRevalidateUserSWR = () => {
   const fetch = useFetch();
+  const SWRConfig = useSWRConfig();
 
-  return async (...args: Parameters<typeof fetch>) => {
+  return async (...args: FetchParameters) => {
     const response = await fetch(...args);
-    const { data } = await response.clone().json();
 
-    setState({
-      user: data?.user ?? initialState.user,
-    });
+    if (response.ok) SWRConfig.mutate(SWRkey);
 
     return response;
   };
 };
 
-export const useIsAuthenticated = flow(useUserId, Boolean);
+export const withUserSWR = (Component) => (props) => {
+  useUserSWR();
+
+  return <Component {...props} />;
+};
+
+export const useIsAuthenticated = () => {
+  const userSWR = useUserSWR();
+
+  if (userSWR.error) return false;
+
+  return Boolean(userSWR.data?.id);
+};
 
 export const withAuthenticated = (Component) => (props) => {
   const isAuthenticated = useIsAuthenticated();
-  const userId = useUserId();
+  const userSWR = useUserSWR();
 
-  if (isAuthenticated) return <Component key={userId} {...props} />;
+  if (isAuthenticated) return <Component key={userSWR.data?.id} {...props} />;
 };
