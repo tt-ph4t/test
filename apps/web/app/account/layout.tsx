@@ -1,14 +1,10 @@
-"use client";
+import { AuthenticatedLayout } from "@/app/_misc/layouts/authenticated";
+import { CenterLayout } from "@/app/_misc/layouts/center";
 
-import { useIsAuthenticated, useUserSWR } from "@/app/_misc/auth/session";
-import { redirect } from "next/navigation";
-
-export default function Layout({ children }) {
-  const isAuthenticated = useIsAuthenticated();
-  const userSWR = useUserSWR();
-
-  if (userSWR.isLoading) return "loading";
-  if (isAuthenticated) return children;
-
-  redirect("/login");
+export default function Layout({ children }: LayoutProps<"/account">) {
+  return (
+    <AuthenticatedLayout>
+      <CenterLayout>{children}</CenterLayout>
+    </AuthenticatedLayout>
+  );
 }

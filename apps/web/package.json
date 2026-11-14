@@ -13,6 +13,7 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@bprogress/next": "3.2.12",
     "@faker-js/faker": "10.6.0",
     "@fluentui/react-context-selector": "9.2.21",
     "@repo/shared": "*",

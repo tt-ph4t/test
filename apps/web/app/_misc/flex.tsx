@@ -19,6 +19,7 @@ export const Flex = <T extends React.ElementType = "div">({
         display: "flex",
         gap: `calc(var(--spacing) * ${gap})`,
         flexWrap: "wrap",
+        alignItems: "flex-start",
         ...style,
       }}
       {...props}

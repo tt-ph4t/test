@@ -1,9 +1,3 @@
-"use client";
+import React from "react";
 
-import { useUserSWR } from "@/app/_misc/auth/session";
-
-export default function Page() {
-  const userSWR = useUserSWR();
-
-  return JSON.stringify(userSWR.data);
-}
+export default React.Fragment;

@@ -2,8 +2,8 @@
 
 import { useIsAuthenticated } from "@/app/_misc/auth/session";
 import { Flex } from "@/app/_misc/flex";
+import { useRouter } from "@bprogress/next/app";
 import { isString, mapValues } from "es-toolkit";
-import { useRouter } from "next/navigation";
 
 const data = mapValues(
   {

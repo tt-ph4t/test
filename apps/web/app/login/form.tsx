@@ -55,7 +55,7 @@ const SignOut = () => {
   );
 };
 
-export default function Form() {
+export default () => {
   const auth = useAuth();
   const disabled = useDisabled();
 
@@ -64,7 +64,6 @@ export default function Form() {
       as="form"
       style={{
         flexDirection: "column",
-        alignItems: "flex-start",
       }}
       action={auth.signIn}
     >
@@ -89,4 +88,4 @@ export default function Form() {
       <SignOut />
     </Flex>
   );
-}
+};
