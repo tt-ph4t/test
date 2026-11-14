@@ -2,7 +2,6 @@ import { Navigation } from "@/app/_layout/navigation";
 import { AuthProvider } from "@/app/_misc/auth";
 import { Flex } from "@/app/_misc/flex";
 import { Logs, LogsProvider } from "@/app/_misc/logs";
-import { PingProvider } from "@/app/_misc/ping";
 import type { Metadata } from "next";
 import React from "react";
 import "the-new-css-reset";
@@ -15,11 +14,9 @@ export const metadata: Metadata = {
 
 const withProviders = (Component) => (props) => (
   <LogsProvider>
-    <PingProvider>
-      <AuthProvider>
-        <Component {...props} />
-      </AuthProvider>
-    </PingProvider>
+    <AuthProvider>
+      <Component {...props} />
+    </AuthProvider>
   </LogsProvider>
 );
 

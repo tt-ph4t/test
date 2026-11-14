@@ -1,6 +1,7 @@
 "use client";
 
 import { useFetch } from "@/app/_misc/use-fetch";
+import { useIsServerOnlineSWR } from "@/app/_misc/use-is-server-online-swr";
 import { URLS } from "@repo/shared/config.ts";
 import type { FetchParameters, User } from "@repo/shared/types.ts";
 import useSWR, { useSWRConfig } from "swr";
@@ -9,9 +10,10 @@ const SWRkey = `${URLS.API}users/me`;
 
 export const useUserSWR = () => {
   const fetch = useFetch();
+  const { isServerOnline } = useIsServerOnlineSWR();
 
   return useSWR<User>(
-    SWRkey,
+    isServerOnline ? SWRkey : null,
     async () => (await (await fetch(SWRkey)).json()).data.user,
   );
 };

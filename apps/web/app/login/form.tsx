@@ -4,14 +4,16 @@ import { useAuth } from "@/app/_misc/auth";
 import { useIsAuthenticated } from "@/app/_misc/auth/session";
 import { Flex } from "@/app/_misc/flex";
 import { FormButton } from "@/app/_misc/form-button";
-import { useIsServerOnline } from "@/app/_misc/ping";
+import { useIsServerOnlineSWR } from "@/app/_misc/use-is-server-online-swr";
 import { faker } from "@faker-js/faker";
 
-const useDisabled = () => {
+const useDisabled = (requireAuthenticated = false) => {
   const isAuthenticated = useIsAuthenticated();
-  const isServerOnline = useIsServerOnline();
+  const { isServerOnline } = useIsServerOnlineSWR();
 
-  return !isServerOnline || isAuthenticated;
+  return !isServerOnline || requireAuthenticated
+    ? !isAuthenticated
+    : isAuthenticated;
 };
 
 const SignUps = () => {
@@ -44,10 +46,10 @@ const SignUps = () => {
 
 const SignOut = () => {
   const auth = useAuth();
-  const disabled = useDisabled();
+  const disabled = useDisabled(true);
 
   return (
-    <button disabled={!disabled} type="button" onClick={auth.signOut}>
+    <button disabled={disabled} type="button" onClick={auth.signOut}>
       Sign out
     </button>
   );
