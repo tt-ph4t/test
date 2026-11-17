@@ -3,5 +3,8 @@
   "type": "module",
   "exports": {
     "./*": "./src/*"
+  },
+  "devDependencies": {
+    "@types/pg": "8.23.1"
   }
 }
