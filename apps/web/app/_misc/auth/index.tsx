@@ -12,16 +12,20 @@ import { URLS } from "@repo/shared/config.ts";
 import { useLockFn } from "ahooks";
 import { asyncNoop, identity, mapValues } from "es-toolkit";
 
+type FormDataAction = (formData: FormData) => Promise<void>;
+
 type ContextType = {
-  signUp: (formData: FormData) => Promise<void>;
-  signIn: (formData: FormData) => Promise<void>;
+  signUp: FormDataAction;
+  signIn: FormDataAction;
   signOut: typeof asyncNoop;
+  update: FormDataAction;
 };
 
 const Context = createContext<ContextType>({
   signUp: asyncNoop,
   signIn: asyncNoop,
   signOut: asyncNoop,
+  update: asyncNoop,
 });
 
 const url = new URL(`${URLS.API}auth`);
@@ -49,6 +53,12 @@ export const AuthProvider = withUserSWR(
             signOut: async () => {
               await fetchAndRevalidateUserSWR(`${url}/sign-out`, {
                 method: "POST",
+              });
+            },
+            update: async (formData) => {
+              await fetchAndRevalidateUserSWR(`${url}/update`, {
+                method: "PATCH",
+                body: formData,
               });
             },
           },

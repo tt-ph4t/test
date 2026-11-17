@@ -1,4 +1,9 @@
-import { PasswordHasher, Public, SignInService } from "@nestjs/authentication";
+import {
+  CurrentUser,
+  PasswordHasher,
+  Public,
+  SignInService,
+} from "@nestjs/authentication";
 import {
   Body,
   Controller,
@@ -6,15 +11,16 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  Patch,
   Post,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import type { APIResponse } from "@repo/shared/types.ts";
+import type { APIResponse, User } from "@repo/shared/types.ts";
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { POOL_INJECTION_TOKEN } from "../database.module.ts";
-import { SignInDto, SignUpDto } from "./dto.ts";
+import { SignInDto, SignUpDto, UpdateUserDto } from "./dto.ts";
 
 const addPepper = (password: string, pepper = "gay") => `${pepper}_${password}`;
 
@@ -103,6 +109,37 @@ export default class {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @Patch("update")
+  async update(
+    @CurrentUser("id") userId: User["id"],
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<APIResponse> {
+    const _email = updateUserDto.email || null;
+    const _password = updateUserDto.password || null;
+
+    await this.pool.query(
+      `
+      UPDATE users
+      SET email = COALESCE($2, email),
+          password_hash = COALESCE($3, password_hash)
+      WHERE id = $1
+      `,
+      [
+        userId,
+        _email,
+        _password
+          ? await this.passwordHasher.hash(addPepper(_password))
+          : _password,
+      ],
+    );
+
+    if (_email || _password) await this.signInService.signOutEverywhere(userId);
+
+    return {
+      message: "Updated successfully",
+    };
   }
 
   @Post("sign-out")

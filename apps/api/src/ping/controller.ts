@@ -18,7 +18,7 @@ export default class {
   ping(): Observable<PingMessageEvent["data"]> {
     return timer(0, 1000).pipe(
       exhaustMap(() =>
-        from(this.pool.query("SELECT 1")).pipe(
+        from(this.pool.query("SELECT FIX_APPS_WEB")).pipe(
           map(() => 1 as const),
           catchError(() => of(0 as const)),
         ),

@@ -11,7 +11,7 @@ export const useIsServerOnlineSWR = (url = `${URLS.API}ping`) => {
     const eventSource = new EventSource(url);
 
     eventSource.onmessage = (messageEvent: PingMessageEvent) => {
-      next(undefined, Boolean(messageEvent.data));
+      next(undefined, Boolean(+messageEvent.data));
     };
 
     eventSource.onerror = () => {
@@ -25,7 +25,7 @@ export const useIsServerOnlineSWR = (url = `${URLS.API}ping`) => {
   });
 
   return {
-    isServerOnline: Boolean(!SWRSubscription.error && SWRSubscription.data),
+    isServerOnline: !SWRSubscription.error && SWRSubscription.data,
     isServerOnlineSWR: SWRSubscription,
   };
 };

@@ -4,28 +4,23 @@ import { useAuth } from "@/app/_misc/auth";
 import { useIsAuthenticated } from "@/app/_misc/auth/session";
 import { Flex } from "@/app/_misc/flex";
 import { FormButton } from "@/app/_misc/form-button";
-import { useIsServerOnlineSWR } from "@/app/_misc/use-is-server-online-swr";
 import { faker } from "@faker-js/faker";
+import React from "react";
 
-const useDisabled = (requireAuthenticated = false) => {
-  const isAuthenticated = useIsAuthenticated();
-  const { isServerOnline } = useIsServerOnlineSWR();
-
-  return !isServerOnline || requireAuthenticated
-    ? !isAuthenticated
-    : isAuthenticated;
-};
-
-const SignUps = () => {
+const SignUps = (props: React.ComponentProps<typeof FormButton>) => {
   const auth = useAuth();
-  const disabled = useDisabled();
+  const isAuthenticated = useIsAuthenticated();
 
   return (
     <>
-      <FormButton formAction={auth.signUp} disabled={disabled}>
+      <FormButton
+        formAction={auth.signUp}
+        disabled={isAuthenticated}
+        {...props}
+      >
         Sign up
       </FormButton>
-      <button
+      <FormButton
         type="button"
         onClick={async () => {
           const formData = new FormData();
@@ -36,56 +31,77 @@ const SignUps = () => {
 
           await auth.signUp(formData);
         }}
-        disabled={disabled}
+        disabled={isAuthenticated}
+        {...props}
       >
         Quick sign up (password = email)
-      </button>
+      </FormButton>
     </>
   );
 };
 
-const SignOut = () => {
+export const SignOut = (props: React.ComponentProps<typeof FormButton>) => {
   const auth = useAuth();
-  const disabled = useDisabled(true);
+  const isAuthenticated = useIsAuthenticated();
 
   return (
-    <button disabled={disabled} type="button" onClick={auth.signOut}>
+    <FormButton
+      disabled={!isAuthenticated}
+      type="button"
+      onClick={auth.signOut}
+      {...props}
+    >
       Sign out
-    </button>
+    </FormButton>
   );
 };
 
-export default () => {
+const SignIn = (props: React.ComponentProps<typeof FormButton>) => {
   const auth = useAuth();
-  const disabled = useDisabled();
+  const isAuthenticated = useIsAuthenticated();
 
   return (
-    <Flex
-      as="form"
-      style={{
-        flexDirection: "column",
-      }}
-      action={auth.signIn}
-    >
+    <FormButton formAction={auth.signIn} disabled={isAuthenticated} {...props}>
+      Sign in
+    </FormButton>
+  );
+};
+
+const Inputs = () => {
+  const isAuthenticated = useIsAuthenticated();
+
+  return (
+    <>
       <input
-        disabled={disabled}
+        disabled={isAuthenticated}
         placeholder="Email"
         required
         type="email"
         name="email"
       />
       <input
-        disabled={disabled}
+        disabled={isAuthenticated}
         placeholder="Password"
         required
         type="password"
         name="password"
       />
-      <FormButton disabled={disabled}>Sign in</FormButton>
-      <Flex>
-        <SignUps />
-      </Flex>
-      <SignOut />
-    </Flex>
+    </>
   );
 };
+
+export default () => (
+  <Flex
+    as="form"
+    style={{
+      flexDirection: "column",
+    }}
+  >
+    <Inputs />
+    <SignIn />
+    <Flex>
+      <SignUps />
+    </Flex>
+    <SignOut />
+  </Flex>
+);

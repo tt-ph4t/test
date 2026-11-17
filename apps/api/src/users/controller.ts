@@ -17,7 +17,7 @@ export default class {
 
   @Sse("unstable_sse_me")
   unstable_sse_me(
-    @CurrentUser() user: User,
+    @CurrentUser("id") userId: User["id"],
     @Session() session: SessionRecord,
   ) {
     return timer(0, 1000).pipe(
@@ -30,7 +30,7 @@ export default class {
             FROM users
             WHERE id = $1
             `,
-            [user.id],
+            [userId],
           ),
         ),
       ),
@@ -48,7 +48,6 @@ export default class {
       data: {
         user,
       },
-      message: "User found",
     };
   }
 }

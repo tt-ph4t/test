@@ -1,6 +1,6 @@
 export type APIResponse<d = any> = {
   data?: d;
-  message: string | string[];
+  message?: string | string[];
 };
 
 export type PingMessageEvent = MessageEvent<0 | 1>;
@@ -10,10 +10,8 @@ export type User = {
   email: string;
 };
 
-export type UserResponse = Required<
-  APIResponse<{
-    user: User;
-  }>
->;
+export type UserResponse = APIResponse<{
+  user: User;
+}>;
 
 export type FetchParameters = Parameters<typeof fetch>;

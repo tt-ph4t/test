@@ -8,7 +8,7 @@ import {
 import type { APIResponse } from "@repo/shared/types.ts";
 import { noop } from "es-toolkit";
 import { castArray } from "es-toolkit/compat";
-import { flatMap, map, pipe } from "es-toolkit/fp";
+import { compact, flatMap, map, pipe } from "es-toolkit/fp";
 import React from "react";
 
 type Log = {
@@ -41,6 +41,7 @@ export const useLogs = () => {
           flatMap((log) =>
             pipe(
               castArray(log.message),
+              compact(),
               map((message) => ({
                 date: log.date ?? new Date(),
                 message,

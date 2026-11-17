@@ -14,7 +14,11 @@ export const useFetch = () => {
       ...init,
     });
 
-    logs.add(await response.clone().json());
+    const clonedResponse = response.clone();
+
+    try {
+      logs.add(await clonedResponse.json());
+    } catch {}
 
     progress.stop();
 
