@@ -3,7 +3,7 @@
 import { useAuth } from "@/app/_misc/auth";
 import { useIsAuthenticated } from "@/app/_misc/auth/session";
 import { Flex } from "@/app/_misc/flex";
-import { FormButton } from "@/app/_misc/form-button";
+import { FormButton, FormInput } from "@/app/_misc/form-button";
 import { faker } from "@faker-js/faker";
 import React from "react";
 
@@ -72,14 +72,14 @@ const Inputs = () => {
 
   return (
     <>
-      <input
+      <FormInput
         disabled={isAuthenticated}
         placeholder="Email"
         required
         type="email"
         name="email"
       />
-      <input
+      <FormInput
         disabled={isAuthenticated}
         placeholder="Password"
         required

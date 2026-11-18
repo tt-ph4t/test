@@ -25,7 +25,7 @@ export const useIsServerOnlineSWR = (url = `${URLS.API}ping`) => {
   });
 
   return {
-    isServerOnline: !SWRSubscription.error && SWRSubscription.data,
+    isServerOnline: Boolean(!SWRSubscription.error && SWRSubscription.data),
     isServerOnlineSWR: SWRSubscription,
   };
 };

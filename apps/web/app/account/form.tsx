@@ -3,7 +3,7 @@
 import { useAuth } from "@/app/_misc/auth";
 import { useUserSWR } from "@/app/_misc/auth/session";
 import { Flex } from "@/app/_misc/flex";
-import { FormButton } from "@/app/_misc/form-button";
+import { FormButton, FormInput } from "@/app/_misc/form-button";
 import { SignOut } from "@/app/login/form";
 import React from "react";
 
@@ -22,8 +22,8 @@ const Inputs = () => {
 
   return (
     <>
-      <input disabled defaultValue={userSWR.data?.id} type="text" name="id" />
-      <input placeholder={userSWR.data?.email} type="email" name="email" />
+      <FormInput disabled defaultValue={userSWR.data?.id} name="id" />
+      <FormInput placeholder={userSWR.data?.email} type="email" name="email" />
     </>
   );
 };
@@ -36,7 +36,7 @@ export default () => (
     }}
   >
     <Inputs />
-    <input placeholder="Password" type="password" name="password" />
+    <FormInput placeholder="Password" type="password" name="password" />
     <Update />
     <SignOut />
   </Flex>
